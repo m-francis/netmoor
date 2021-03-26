@@ -13,7 +13,7 @@ const (
 	ReadTimeout  = 2 * time.Second
 )
 
-func Lookup(nameserver string, qns []*Question) *Packet {
+func LookupName(nameserver string, qns []*Question) *Packet {
 	reqPacket := Packet{
 		Header: &Header{
 			ID:      uint16(rand.Int()),
