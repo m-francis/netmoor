@@ -57,7 +57,7 @@ func (q *Question) Log() {
 }
 
 func NewQuestionFromResponseBytes(rb []byte, h *Header) (questions []*Question, endIndex uint16) {
-	startIndex := uint16(len(h.inWireFormat))
+	startIndex := HeaderLengthBytes
 	endIndex = startIndex
 
 	for i := 0; i < int(h.QDCount); i++ {

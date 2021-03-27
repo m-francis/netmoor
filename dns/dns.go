@@ -13,8 +13,8 @@ const (
 	ReadTimeout  = 2 * time.Second
 )
 
-func LookupName(nameserver string, qns []*Question) *Packet {
-	reqPacket := Packet{
+func LookupName(nameserver string, qns []*Question) *Message {
+	msg := Message{
 		Header: &Header{
 			ID:      uint16(rand.Int()),
 			RD:      1,
@@ -23,12 +23,12 @@ func LookupName(nameserver string, qns []*Question) *Packet {
 		Questions: qns,
 	}
 
-	rb := sendAndReceivePacket(nameserver, reqPacket.ToWire())
+	rb := sendAndReceiveMessage(nameserver, msg.ToWire())
 
-	return NewPacketFromResponseBytes(rb)
+	return NewMessageFromResponseBytes(rb)
 }
 
-func sendAndReceivePacket(nameserver string, reqB []byte) []byte {
+func sendAndReceiveMessage(nameserver string, reqB []byte) []byte {
 	conn, err := net.Dial("udp", fmt.Sprintf("%s:53", nameserver))
 
 	if err != nil {
@@ -47,10 +47,9 @@ func sendAndReceivePacket(nameserver string, reqB []byte) []byte {
 
 	rb := make([]byte, 512)
 
-	for {
-		if _, err := conn.Read(rb); err != nil {
-			log.Fatal(err)
-		}
-		return rb
+	if _, err := conn.Read(rb); err != nil {
+		log.Fatal(err)
 	}
+
+	return rb
 }

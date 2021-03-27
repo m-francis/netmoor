@@ -36,20 +36,20 @@ func main() {
 	for _, name := range namesFlag {
 		qns = append(qns, &dns.Question{
 			QName:  name,
-			QType:  1,
-			QClass: 1,
+			QType:  dns.TypeA,
+			QClass: dns.ClassInternet,
 		})
 	}
 
-	packet := dns.LookupName(*ns, qns)
-	printAnswers(packet)
+	msg := dns.LookupName(*ns, qns)
+	printAnswers(msg)
 }
 
-func printAnswers(p *dns.Packet) {
-	for _, an := range p.Answers {
-		if an.Type == 1 {
+func printAnswers(msg *dns.Message) {
+	for _, an := range msg.Answers {
+		if an.Type == dns.TypeA {
 			fmt.Printf("%s has address %s\n", an.Name, an.RDataStr)
-		} else if an.Type == 5 {
+		} else if an.Type == dns.TypeCNAME {
 			fmt.Printf("%s is an alias for %s\n", an.Name, an.RDataStr)
 		}
 	}

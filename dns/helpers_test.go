@@ -7,7 +7,7 @@ import (
 )
 
 func TestDecompressName(t *testing.T) {
-	tc := []struct {
+	testCases := []struct {
 		desc   string
 		rb     []byte
 		offset uint16
@@ -44,7 +44,7 @@ func TestDecompressName(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tc {
+	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
 			name, length := dns.DecompressName(tc.rb, tc.offset)
 			if name != tc.name {

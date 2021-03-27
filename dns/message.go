@@ -5,11 +5,12 @@ import (
 )
 
 const (
-	TypeA     = 1
-	TypeCNAME = 5
+	TypeA         = 1
+	TypeCNAME     = 5
+	ClassInternet = 1
 )
 
-type Packet struct {
+type Message struct {
 	Header     *Header
 	Questions  []*Question
 	Answers    []*Answer
@@ -17,31 +18,34 @@ type Packet struct {
 	Additional []byte
 }
 
-func (p *Packet) ToWire() []byte {
+func (m *Message) ToWire() []byte {
 	var msg []byte
-	msg = append(msg, p.Header.ToWire()...)
-	for _, qn := range p.Questions {
+
+	msg = append(msg, m.Header.ToWire()...)
+
+	for _, qn := range m.Questions {
 		msg = append(msg, qn.ToWire()...)
 	}
+
 	return msg
 }
 
-func (p *Packet) Log() {
-	p.Header.Log()
-	for _, q := range p.Questions {
+func (m *Message) Log() {
+	m.Header.Log()
+	for _, q := range m.Questions {
 		q.Log()
 	}
-	for _, a := range p.Answers {
+	for _, a := range m.Answers {
 		a.Log()
 	}
 }
 
-func NewPacketFromResponseBytes(rb []byte) *Packet {
+func NewMessageFromResponseBytes(rb []byte) *Message {
 	header := NewHeaderFromResponseBytes(rb)
 	assertResponseHeader(header)
 	questions, offset := NewQuestionFromResponseBytes(rb, header)
 	answers, offset := NewAnswersFromResponseBytes(rb, header, offset)
-	return &Packet{
+	return &Message{
 		Header:    header,
 		Questions: questions,
 		Answers:   answers,
